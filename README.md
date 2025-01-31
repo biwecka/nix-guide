@@ -853,3 +853,4 @@ Example:
 -   [YouTube - Nix explained from the ground up](https://www.youtube.com/watch?v=5D3nUU1OVx8)
 -   [YouTube - Introduction to Nix and NixOS (Wil T)](https://www.youtube.com/watch?v=QKoQ1gKJY5A)
 -   [NixOS Wiki - Modules](https://nixos.wiki/wiki/NixOS_modules)
+-   [Reddit - Flake Explanation](https://www.reddit.com/r/NixOS/comments/131fvqs/comment/ji0f3gl)
