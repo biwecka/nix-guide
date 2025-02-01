@@ -839,7 +839,36 @@ Example:
         };
     };
 }
+```
 
+## Inspect a (NixOS) Flake
+When writing a new configuration it's oftentimes helpful to check if a
+configuration is actually applied or if you might have an error in your code
+somewhere. Setting up language servers like `nil` and `nixd` is very helpful
+in this case, but only to a certain extend.
+
+First, to get a basic view of what outputs a flake has, we can use
+```sh
+$ nix flake show .
+
+# Example output when executing command on my system configuration
+git+file:///...
+└───nixosConfigurations
+    ├───nuc: NixOS configuration
+    └───p14s: NixOS configuration
+```
+
+To actually expect what your Nix flake **evaluates to** you can load it up in
+the repl, and query the configurations/options.
+```sh
+$ nix repl
+
+nix-repl> :lf . # <- loads flake from the current directory
+Added X variables
+
+# Example from my system configuration
+nix-repl> nixosConfigurations.<machine-name>.config.programs.sway.enable
+true
 ```
 
 
