@@ -30,6 +30,9 @@ as well as how to use *NixOS*.
 10. [Flakes](#flakes)
 11. [NixOS](#nixos)
     1.  [NixOS Modules](#nixos-modules)
+    2.  [Inspect a NixOS Flake](#inspect-a-nixos-flake)
+    3.  [Home Manager](#home-manager)
+    4.  [Home Manager Modules](#home-manager-modules)
 
 
 ---
@@ -871,8 +874,106 @@ nix-repl> nixosConfigurations.<machine-name>.config.programs.sway.enable
 true
 ```
 
+## Home Manager
+Home Manager is a tool in the Nix ecosystem that allows you to declaratively
+manage your user configuration (e.g. dotfiles, application settings,
+environment variables, etc.) in a reproducible way. Instead of manually editing
+and maintaining a variety of configuration files, you define your configuration
+once in Nix expressions, and Home Manager takes care of setting everything up.
+
+Home Manager supports two main modes of operation, each differing in how it
+integrates with your system:
+-   Standalone Mode
+    -   Overview: You use Home Manager purely for configuring your user
+        environment, without tying it into the system configuration. This means
+        you run commands like home-manager switch directly to activate or
+        update your configuration.
+
+    -   Use Cases:
+        -   On non-NixOS systems (e.g., Ubuntu, macOS) where you want the
+            benefits of declarative configurations for your dotfiles and user
+            packages.
+        -   On NixOS too, if you prefer to keep user config fully separate
+            from your system config.
+
+-   NixOS Module Mode
+    -   Overview: Home Manager is integrated into your NixOS system
+        configuration, leveraging the NixOS module system. This is often
+        referred to as the “NixOS module” mode.
+    -   Use Cases:
+        -   You run NixOS and want one, unified configuration where your system
+            and user settings are managed together.
+        -   You prefer to keep your user configs in the same repository or set
+            of files as the system-level configs for a completely declarative
+            OS.
+
+As I like to use *Home Manager* as a *NixOS Module*, that's what this guide
+will cover.
+
+In your NixOS configuration, the Home Manager module can be added like this:
+```nix
+{
+    modules = [
+        # ...
+
+        home-manager.nixosModules.home-manager {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+
+            home-manager.users = {
+                john = {
+                    # ...
+                };
+
+                doe = {
+                    # ...
+                }
+            };
+        }
+    ];
+}
+```
+
+The attribute set of each use is essentially a Home Manager **module** which
+is very similar to a NixOS module. The following chapter explains what
+a Home Manager module is.
+
+## Home Manager Modules
+Home Manager modules are very similar to NixOS modules. Just as their
+counterpart, home-manager modules are also a function with certain parameters
+which returns an attribute set with a standardized structure:
+```nix
+{ config, options, pkgs, lib, ... }: {
+    imports = [];
+    options = {};
+    config = {};
+}
+```
+
+The "root" home-manager module of each user, is usually not written as
+function and just defined as attribute set. The home-manager modules imported
+via this "root" module's `imports` attribute, can be defined as functions.
+```nix
+home-manager.users.john-doe = {
+    imports = [
+        # import more home-manager modules here
+    ];
+    config = {
+        home.packages = [
+            # ...
+        ];
+    };
+};
+```
+The Home Manager NixOS module takes care of passing parameters like `pkgs` and
+`lib` to the home-manager modules too.
+Also, when using Home Manager as NixOS module (like we do in this guide),
+additional parameters for NixOS modules (which are defined in `specialArgs`)
+are also passed to home-manager modules automatically.
+
 
 ---
+
 
 # Attributions
 -   [Nix from the Ground up](https://www.zombiezen.com/blog/2021/12/nix-from-the-ground-up/)
