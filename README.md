@@ -949,6 +949,10 @@ which returns an attribute set with a standardized structure:
     config = {};
 }
 ```
+Even though home-manager modules and NixOS modules both take an `config`
+parameter, it's important to know their differences:
+-   in a NixOS module, `config` is the merged **system** configuration
+-   in a Home Manager module, `config` is the merged **user** configuration
 
 The "root" home-manager module of each user, is usually not written as
 function and just defined as attribute set. The home-manager modules imported
@@ -971,10 +975,14 @@ Also, when using Home Manager as NixOS module (like we do in this guide),
 additional parameters for NixOS modules (which are defined in `specialArgs`)
 are also passed to home-manager modules automatically.
 
+# Secrets Managment
+*TODO*
+
+# Workflows when working on the NixOS Config
+*TODO*
+
 
 ---
-
-
 # Attributions
 -   [Nix from the Ground up](https://www.zombiezen.com/blog/2021/12/nix-from-the-ground-up/)
 -   [Nix Dev - Nix Language Tutorial](https://nix.dev/tutorials/nix-language.html)
@@ -984,3 +992,9 @@ are also passed to home-manager modules automatically.
 -   [YouTube - Introduction to Nix and NixOS (Wil T)](https://www.youtube.com/watch?v=QKoQ1gKJY5A)
 -   [NixOS Wiki - Modules](https://nixos.wiki/wiki/NixOS_modules)
 -   [Reddit - Flake Explanation](https://www.reddit.com/r/NixOS/comments/131fvqs/comment/ji0f3gl)
+-   NixOS Secrets Managements with Sops (3-Part YouTube Series)
+    -   [Part 1](https://www.youtube.com/watch?v=6EMNHDOY-wo)
+    -   [Part 2](https://www.youtube.com/watch?v=gdxlc5a6ne0)
+    -   [Part 3](https://www.youtube.com/watch?v=HnmpYp1_aKo)
+
+-   [Nix Config Workflows with `just`](https://www.youtube.com/watch?v=wQCV0QgIbuk)
