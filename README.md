@@ -975,6 +975,52 @@ Also, when using Home Manager as NixOS module (like we do in this guide),
 additional parameters for NixOS modules (which are defined in `specialArgs`)
 are also passed to home-manager modules automatically.
 
+### Access System Config from Home-Manager Module
+If you use the Home-Manager NixOS module, you can access the system level
+`config` (which also includes the `options`) values, through the `osConfig`
+attribute. Home Manager passes `osConfig` as a module argument to any
+home-manager module. Here's an example use case:
+```nix
+{ pkgs, lib, osConfig, ... }:
+{
+    home.packages = [
+        pkgs.hello
+    ]
+    ++
+    lib.optionals (osConfig.services.myService.enable) [
+        pkgs.someExtraPackage
+    ];
+}
+```
+
+As the options of custom NixOS modules are part of the system configuration,
+they can also be accessed through `osConfig`:
+```nix
+# NixOS Module
+{ lib, ... }:
+{
+    options.myModule.myOption = lib.mkOption {
+        type = lib.types.str;
+        default = "defaultValue";
+        description = "A custom option for my module";
+    };
+
+    config = {
+        # Here you could also provide some default behavior
+        # based on myModule.myOption if you wish.
+    };
+}
+```
+
+```nix
+# Home-Manager Module
+{ pkgs, lib, osConfig, ... }:
+{
+    # For instance, use it conditionally:
+    home.packages = lib.optionals (osConfig.myModule.myOption == "customValue")
+        [ pkgs.somePackage ];
+}
+```
 
 ---
 # Attributions
